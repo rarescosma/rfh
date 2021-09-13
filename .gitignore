@@ -1,0 +1,9 @@
+*.pyc
+rfh/tuya
+.idea
+config.yaml
+build
+dist
+*.spec
+.python-version
+
