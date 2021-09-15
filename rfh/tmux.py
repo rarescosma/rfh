@@ -16,7 +16,7 @@ WinSpec = NewType("WinSpec", str)
 
 @lru_cache(maxsize=1)
 def _tmux_client() -> sh.Command:
-    return getattr(sh, "tmux")
+    return getattr(sh, "tmux").bake(_ok_code=[1])
 
 
 @lru_cache(maxsize=1)
