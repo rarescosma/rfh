@@ -14,7 +14,7 @@ setup(
     license="MIT",
     install_requires=[
         "python-rofi==1.0.1",
-        "libtmux",
+        "sh",
         "i3ipc>=2.0.1",
         "click",
         "tuyapy==0.1.4",

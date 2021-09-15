@@ -1,13 +1,13 @@
 """Tmux helper."""
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import Iterable, List, NewType, Optional
+from typing import Iterable, List, NewType
 
 import i3ipc
-import libtmux
-from libtmux.exc import LibTmuxException
+import sh
 
 TMUX_WIN_NAME_PREFIX: str = "tmux"
+TMUX_LIST_FORMAT: str = "#{session_name}:#{window_index}:#{window_name}"
 TERMINAL_CMD: str = "alacritty -e sh -c "
 PREFIX: str = "rfh - "
 
@@ -15,8 +15,8 @@ WinSpec = NewType("WinSpec", str)
 
 
 @lru_cache(maxsize=1)
-def _tmux_client() -> libtmux.Server:
-    return libtmux.Server()
+def _tmux_client() -> sh.Command:
+    return getattr(sh, "tmux")
 
 
 @lru_cache(maxsize=1)
@@ -36,16 +36,12 @@ class _I3:
 
 class Tmux:
     @staticmethod
-    def list_windows() -> Iterable[libtmux.Window]:
+    def list_windows() -> Iterable[WinSpec]:
+        cmd = _tmux_client()("list-windows", "-a", "-F", TMUX_LIST_FORMAT)
         try:
-            for session in _tmux_client().list_sessions():
-                yield from session.list_windows()
-        except LibTmuxException:
+            return [WinSpec(_) for _ in cmd.wait().splitlines() if _]
+        except sh.ErrorReturnCode:
             return []
-
-    @staticmethod
-    def window_fqn(win: libtmux.Window) -> str:
-        return f"{win.session.name}:{win.index}:{win.name}"
 
 
 @dataclass(frozen=True)
@@ -67,10 +63,7 @@ class _Window:
 
 
 def list_windows() -> List[WinSpec]:
-    return [
-        WinSpec(f"{PREFIX}{Tmux.window_fqn(win)}")
-        for win in Tmux.list_windows()
-    ]
+    return [WinSpec(f"{PREFIX}{win}") for win in Tmux.list_windows()]
 
 
 def switch_window(win_spec: WinSpec) -> None:
