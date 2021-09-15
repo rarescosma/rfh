@@ -9,14 +9,14 @@ import sh
 TMUX_WIN_NAME_PREFIX: str = "tmux"
 TMUX_LIST_FORMAT: str = "#{session_name}:#{window_index}:#{window_name}"
 TERMINAL_CMD: str = "alacritty -e sh -c "
-PREFIX: str = "rfh - "
+PREFIX: str = "tmux "
 
 WinSpec = NewType("WinSpec", str)
 
 
 @lru_cache(maxsize=1)
 def _tmux_client() -> sh.Command:
-    return getattr(sh, "tmux").bake(_ok_code=[1])
+    return getattr(sh, "tmux").bake(_ok_code=[0, 1])
 
 
 @lru_cache(maxsize=1)

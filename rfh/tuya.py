@@ -16,7 +16,7 @@ from xdg import xdg_config_home
 
 DevSpec = NewType("DevSpec", str)
 
-PREFIX: str = "rfh - "
+PREFIX: str = "tuya "
 _REPO: Path = xdg_config_home() / "rfh" / "tuya"
 
 CONFIG_FILE: Path = _REPO / "config.json"
