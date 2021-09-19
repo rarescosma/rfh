@@ -16,7 +16,8 @@ def main(spec: str):
             print(thing)
         sys.exit(0)
 
-    namespace, spec, *_ = " ".join(spec).split()
+    namespace, *spec_parts = " ".join(spec).split()
+    spec = " ".join(spec_parts)
 
     if namespace == "tmux":
         tmux.switch_window(tmux.WinSpec(spec))
