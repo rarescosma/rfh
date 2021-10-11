@@ -18,7 +18,7 @@ clean:
 	rm -f $(DESTDIR)/$(PROJECT)
 
 .python-version:
-	pyenv local 3.9.4
+	pyenv local 3.9.7
 
 .venv/freeze: .python-version
 	test -f .venv/bin/activate || python3 -mvenv .venv --prompt $(PROJECT)
