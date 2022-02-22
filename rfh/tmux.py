@@ -27,16 +27,21 @@ def _i3_client() -> i3ipc.Connection:
 class _I3:
     @staticmethod
     def list_tmux_windows() -> List[i3ipc.con.Con]:
+        """List i3 tmux windows."""
         return _i3_client().get_tree().find_named(rf"^{TMUX_WIN_NAME_PREFIX}\s")
 
     @staticmethod
     def exec(cmd: str) -> List[i3ipc.CommandReply]:
+        """Execute client command."""
         return _i3_client().command(f"exec {cmd}")
 
 
 class Tmux:
+    """Tmux layer."""
+
     @staticmethod
     def list_windows() -> Iterable[WinSpec]:
+        """List tmux tmux windows."""
         cmd = _tmux_client()("list-windows", "-a", "-F", TMUX_LIST_FORMAT)
         try:
             return [WinSpec(_) for _ in cmd.wait().splitlines() if _]
@@ -51,6 +56,7 @@ class _Window:
 
     @classmethod
     def from_spec(cls, win_spec: WinSpec) -> "_Window":
+        """Create from spec."""
         session, window_index, *_ = win_spec.removeprefix(PREFIX).split(":")
         return cls(
             session=session,
@@ -59,10 +65,12 @@ class _Window:
 
     @property
     def attach_id(self) -> str:
+        """Generate an ID good for the attach command."""
         return f"{self.session}:{self.window_index}"
 
 
 def list_windows() -> List[WinSpec]:
+    """List tmux tmux windows."""
     return [WinSpec(f"{PREFIX}{win}") for win in Tmux.list_windows()]
 
 

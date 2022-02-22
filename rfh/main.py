@@ -1,3 +1,4 @@
+""" Rofi helpers. """
 import os
 import subprocess
 import sys
@@ -9,7 +10,7 @@ from rfh import tmux, tuya
 
 @click.command()
 @click.argument("spec", required=False, nargs=-1)
-def main(spec: str):
+def main(spec: str = "") -> None:
     """Entrypoint."""
     if not spec:
         for thing in [*tmux.list_windows(), *tuya.list_devices()]:
@@ -24,8 +25,8 @@ def main(spec: str):
     elif namespace == "tuya":
         subprocess.Popen(
             ["nohup", "rfh", "tuya-flip", spec],
-            stdout=open("/dev/null", "w"),
-            stderr=open("/dev/null", "w"),
+            stdout=open("/dev/null", "w", encoding="utf-8"),
+            stderr=open("/dev/null", "w", encoding="utf-8"),
             preexec_fn=os.setpgrp,
         )
     elif namespace == "tuya-flip":

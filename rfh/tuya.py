@@ -1,7 +1,7 @@
 """Tuya helper."""
 from functools import lru_cache
 from pathlib import Path
-from typing import List, NewType
+from typing import List, NewType, cast
 
 from lenses import lens
 from lenses.ui import BaseUiLens
@@ -25,7 +25,7 @@ DEVICES_FILE: Path = _REPO / "devices.json"
 
 @lru_cache(maxsize=1)
 def _tuya_client() -> TuyaApi:
-    config = {**load(CONFIG_FILE), **load(AUTH_FILE)}
+    config = {**cast(dict, load(CONFIG_FILE)), **cast(dict, load(AUTH_FILE))}
     auth_keys = ["accessToken", "refreshToken", "expireTime"]
 
     for conf_key in config:
@@ -64,11 +64,13 @@ def _flip_device(dev: dict) -> None:
 
 
 def list_devices() -> List[DevSpec]:
+    """List all known devices."""
     dev_filter = lens.Each().Filter(lambda x: x["dev_type"] == "scene")
     return (dev_filter & lens.F(_make_spec)).collect()(_discover_devices())
 
 
 def flip_device(dev_spec: DevSpec) -> None:
+    """Flip device state."""
     name, *_ = dev_spec.removeprefix(PREFIX).split(":")
 
     if matching := _dev_by_name(name).collect()(_discover_devices()):
