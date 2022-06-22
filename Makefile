@@ -6,7 +6,7 @@ DESTDIR?=$(PREFIX)/bin
 all: dist/$(PROJECT)
 
 dist/$(PROJECT): .venv/freeze
-	. .venv/bin/activate && pip install pyinstaller==4.5.1 && pyinstaller --onefile $(ENTRYPOINT) -n $(PROJECT)
+	. .venv/bin/activate && pip install pyinstaller\>=5.1 && pyinstaller --onefile $(ENTRYPOINT) -n $(PROJECT)
 
 install: dist/$(PROJECT)
 	mkdir -p $(DESTDIR)
@@ -18,7 +18,7 @@ clean:
 	rm -f $(DESTDIR)/$(PROJECT)
 
 .python-version:
-	pyenv local 3.9.7
+	pyenv local 3.10.4
 
 .venv/freeze: .python-version
 	test -f .venv/bin/activate || python3 -mvenv .venv --prompt $(PROJECT)
