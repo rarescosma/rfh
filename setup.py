@@ -1,4 +1,5 @@
 from setuptools import setup
+
 from rfh.version import __version__
 
 desc = "Rofi helpers for tmux, tuya, ..."
@@ -19,7 +20,7 @@ setup(
         "tuyapy==0.1.4",
         "lenses==1.1.0",
         "xdg",
-        "requests>=2.26.0"
+        "requests>=2.26.0",
     ],
     entry_points="""
         [console_scripts]

@@ -11,9 +11,9 @@ from rfh._json import load
     "cache_content, expected, called",
     [
         ('{"a": 1}', {"a": 1}, False),
-        ('{}', {"a": 1}, True),
-        ('[]', {"a": 1}, True),
-        ('', {"a": 1}, True),
+        ("{}", {"a": 1}, True),
+        ("[]", {"a": 1}, True),
+        ("", {"a": 1}, True),
     ],
 )
 def test_json_cache(tmpdir, cache_content, expected, called):
