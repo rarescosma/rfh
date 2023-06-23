@@ -1,0 +1,45 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/build.yml
+      - rfh/**/*
+      - Makefile
+      - setup.py
+      - .python-version
+
+jobs:
+  Linux:
+    runs-on: ubuntu-20.04
+    container: python:3.11-alpine
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build prep
+        id: build_prep
+        run: |
+          apk add --no-cache make
+          echo "version=$(echo ${GITHUB_SHA} | cut -c1-8)" >> "$GITHUB_ENV"
+      - name: Build binary
+        run: |
+          make build_static
+          dist/static/rfh --version
+      - name: Run tests
+        run: |
+          make test
+      - name: Generate tarball
+        run: |
+          make pack_static BUILD_VERSION=${{ env.version }}
+      - name: Upload tarball
+        uses: actions/upload-artifact@v1
+        with:
+          name: rfh-${{ env.version }}-linux-x86_64.tar.gz
+          path: pack/rfh-${{ env.version }}-linux-x86_64.tar.gz
+      - name: Upload checksum
+        uses: actions/upload-artifact@v1
+        with:
+          name: rfh-${{ env.version }}-linux-x86_64.sha256sum
+          path: pack/rfh-${{ env.version }}-linux-x86_64.sha256sum
