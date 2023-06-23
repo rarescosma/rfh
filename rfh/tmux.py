@@ -44,7 +44,7 @@ class Tmux:
         """List tmux tmux windows."""
         cmd = _tmux_client()("list-windows", "-a", "-F", TMUX_LIST_FORMAT)
         try:
-            return [WinSpec(_) for _ in cmd.wait().splitlines() if _]
+            return [WinSpec(_) for _ in str(cmd).splitlines() if _]
         except sh.ErrorReturnCode:
             return []
 
