@@ -1,0 +1,89 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  Linux:
+    runs-on: ubuntu-20.04
+    container: python:3.11-alpine
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build prep
+        id: build_prep
+        run: |
+          apk add --no-cache make
+          echo "version=${GITHUB_REF#refs/tags/}" >> "$GITHUB_ENV"
+      - name: Build binary
+        run: |
+          make build_static
+          dist/static/rfh --version
+      - name: Run tests
+        run: |
+          make test
+      - name: Generate tarball
+        run: |
+          make pack_static BUILD_VERSION=${{ env.version }}
+      - name: Upload tarball
+        uses: actions/upload-artifact@v1
+        with:
+          name: rfh-${{ env.version }}-linux-x86_64.tar.gz
+          path: pack/rfh-${{ env.version }}-linux-x86_64.tar.gz
+      - name: Upload checksum
+        uses: actions/upload-artifact@v1
+        with:
+          name: rfh-${{ env.version }}-linux-x86_64.sha256sum
+          path: pack/rfh-${{ env.version }}-linux-x86_64.sha256sum
+
+  Release:
+    needs: [Linux]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Get tag
+        id: tag
+        run: |
+          echo "tag=${GITHUB_REF#refs/tags/}" >> "$GITHUB_ENV"
+      - name: Download Linux tarball
+        uses: actions/download-artifact@master
+        with:
+          name: rfh-${{ env.tag }}-linux-x86_64.tar.gz
+          path: pack/
+      - name: Download Linux checksum
+        uses: actions/download-artifact@master
+        with:
+          name: rfh-${{ env.tag }}-linux-x86_64.sha256sum
+          path: pack/
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.tag }}
+          release_name: ${{ env.tag }}
+          draft: false
+          prerelease: false
+      - name: Upload Linux tarball asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: pack/rfh-${{ env.tag }}-linux-x86_64.tar.gz
+          asset_name: rfh-${{ env.tag }}-linux-x86_64.tar.gz
+          asset_content_type: application/gzip
+      - name: Upload Linux checksum asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: pack/rfh-${{ env.tag }}-linux-x86_64.sha256sum
+          asset_name: rfh-${{ env.tag }}-linux-x86_64.sha256sum
+          asset_content_type: text/plain
