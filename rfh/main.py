@@ -6,10 +6,12 @@ import sys
 import click
 
 from rfh import tmux, tuya
+from rfh.version import __version__
 
 
 @click.command()
 @click.argument("spec", required=False, nargs=-1)
+@click.version_option(__version__)
 def main(spec: str = "") -> None:
     """Entrypoint."""
     if not spec:
