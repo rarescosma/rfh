@@ -9,7 +9,7 @@ from unittest.mock import patch
 import click
 import sh
 
-from rfh import tmux, tuya
+from rfh import tmux, tuya, vesync
 from rfh.version import __version__
 
 
@@ -47,7 +47,7 @@ def main(spec: str = "") -> None:
     ).start()
 
     if not spec:
-        for thing in [*tmux.list_windows(), *tuya.list_devices()]:
+        for thing in [*tmux.list_windows(), *tuya.list_devices(), *vesync.list_speeds()]:
             print(thing)
         sys.exit(0)
 
@@ -56,15 +56,17 @@ def main(spec: str = "") -> None:
 
     if namespace == "tmux":
         tmux.switch_window(tmux.WinSpec(spec))
-    elif namespace == "tuya":
+    elif namespace == "tuya" or namespace == "vesync":
         subprocess.Popen(
-            ["nohup", "rfh", "tuya-flip", spec],
+            ["nohup", "rfh", f"{namespace}-flip", spec],
             stdout=open("/dev/null", "w", encoding="utf-8"),
             stderr=open("/dev/null", "w", encoding="utf-8"),
             preexec_fn=os.setpgrp,
         )
     elif namespace == "tuya-flip":
         tuya.flip_device(tuya.DevSpec(spec))
+    elif namespace == "vesync-flip":
+        vesync.set_speed(spec)
 
 
 if __name__ == "__main__":
