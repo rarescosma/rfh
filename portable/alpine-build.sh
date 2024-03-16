@@ -20,7 +20,7 @@ PIP_INSTALL="pip install --root-user-action=ignore --no-cache-dir"
 
 set -xe
 
-apk add --no-cache g++ musl-dev patchelf git make openssl
+apk add --no-cache g++ musl-dev patch patchelf git make openssl
 $PIP_INSTALL -U wheel setuptools
 $PIP_INSTALL scons
 $PIP_INSTALL staticx
@@ -34,6 +34,7 @@ python3 -m venv .venv
 set +x; source .venv/bin/activate; set -x
 
 $PIP_INSTALL .
+patch -p0 -d .venv/lib/python3.11/site-packages/tuyapy --forward --reject-file=- < tuya.patch || true
 
 # produce a 'onefile' executable
 $PIP_INSTALL -I pyinstaller

@@ -26,6 +26,7 @@ clean:
 .venv/freeze: .python-version
 	test -f .venv/bin/activate || python3 -mvenv .venv --prompt $(PROJECT)
 	. .venv/bin/activate && pip install -e . && pip freeze > .venv/freeze
+	patch -p0 -d .venv/lib/python3.11/site-packages/tuyapy --forward --reject-file=- < tuya.patch || true
 
 .PHONY: test
 test:

@@ -1,0 +1,12 @@
+--- tuyaapi.py  2018-08-15 11:37:48.000000000 +0200
++++ tuyaapi.py  2024-03-16 21:19:38.718310875 +0100
+@@ -90,7 +90,7 @@
+     def refresh_access_token(self):
+         data = "grant_type=refresh_token&refresh_token="+SESSION.refreshToken
+         response = requests.get(
+-            (TUYACLOUDURL+"homeassistant/access.do").format(SESSION.region)
++            (TUYACLOUDURL+"/homeassistant/access.do").format(SESSION.region)
+             + "?" + data)
+         response_json = response.json()
+         if response_json.get('responseStatus') == 'error':
+
