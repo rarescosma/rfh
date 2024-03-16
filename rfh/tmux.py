@@ -97,6 +97,4 @@ def switch_window(win_spec: WinSpec) -> None:
         _I3.exec(f"tmux switch-client -t {window.attach_id}")
     # spawn a new tmux terminal
     else:
-        _I3.exec(
-            f"{TERMINAL_CMD}'tmux attach-session -d -t {window.attach_id}'"
-        )
+        _I3.exec(f"{TERMINAL_CMD}'tmux attach-session -d -t {window.attach_id}'")

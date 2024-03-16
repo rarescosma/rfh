@@ -34,10 +34,7 @@ def _tuya_client() -> TuyaApi:
     api = TuyaApi()
     api.check_access_token()
 
-    if (
-        TuyaSession.accessToken is not None
-        and TuyaSession.accessToken != config.get("accessToken")
-    ):
+    if TuyaSession.accessToken is not None and TuyaSession.accessToken != config.get("accessToken"):
         save(AUTH_FILE, {k: getattr(TuyaSession, k) for k in auth_keys})
 
     return api
@@ -53,9 +50,7 @@ def _make_spec(dev: dict) -> str:
 
 
 def _dev_by_name(dev_name: str) -> BaseUiLens:
-    return lens.Each().Filter(
-        lambda x: x.get("name", "").lower() == dev_name.lower()
-    )
+    return lens.Each().Filter(lambda x: x.get("name", "").lower() == dev_name.lower())
 
 
 def _flip_device(dev: dict) -> None:
