@@ -34,7 +34,6 @@ def _vesync_client() -> VeSync:
             setattr(vs, auth_key, config[auth_key])
 
     if not vs.get_devices():
-        print("nope")
         vs.login()
         save(AUTH_FILE, {k: getattr(vs, k) for k in auth_keys})
 
