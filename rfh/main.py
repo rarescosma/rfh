@@ -39,12 +39,8 @@ def monkey_patch_pyi(thing: Callable, env_key: str = "env") -> Callable:
 @click.version_option(__version__)
 def main(spec: str = "") -> None:
     """Entrypoint."""
-    patch(
-        "subprocess.Popen", monkey_patch_pyi(subprocess.Popen), spec=True
-    ).start()
-    patch(
-        "sh.Command.bake", monkey_patch_pyi(sh.Command.bake, env_key="_env")
-    ).start()
+    patch("subprocess.Popen", monkey_patch_pyi(subprocess.Popen), spec=True).start()
+    patch("sh.Command.bake", monkey_patch_pyi(sh.Command.bake, env_key="_env")).start()
 
     if not spec:
         for thing in [*tmux.list_windows(), *tuya.list_devices(), *vesync.list_speeds()]:
@@ -56,7 +52,7 @@ def main(spec: str = "") -> None:
 
     if namespace == "tmux":
         tmux.switch_window(tmux.WinSpec(spec))
-    elif namespace == "tuya" or namespace == "vesync":
+    elif namespace in {"tuya", "vesync"}:
         subprocess.Popen(
             ["nohup", "rfh", f"{namespace}-flip", spec],
             stdout=open("/dev/null", "w", encoding="utf-8"),
