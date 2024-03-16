@@ -50,12 +50,12 @@ jobs:
         run: |
           echo "tag=${GITHUB_REF#refs/tags/}" >> "$GITHUB_ENV"
       - name: Download Linux tarball
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v1
         with:
           name: rfh-${{ env.tag }}-linux-x86_64.tar.gz
           path: pack/
       - name: Download Linux checksum
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v1
         with:
           name: rfh-${{ env.tag }}-linux-x86_64.sha256sum
           path: pack/
