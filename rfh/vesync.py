@@ -1,6 +1,7 @@
 """VeSync helper."""
 from functools import lru_cache
 from pathlib import Path
+import sys
 from typing import Dict, List, cast
 
 from pyvesync import VeSync
@@ -44,13 +45,21 @@ def set_speed(speed_spec: str) -> None:
     """Set device speed."""
     speed, *_ = speed_spec.removeprefix(PREFIX).split(":")
 
-    if speed in SPEEDS:
-        vs = _vesync_client()
-        dev = vs.fans[0]
-        if speed == "sleep":
-            dev.sleep_mode()
-        else:
-            dev.change_fan_speed(SPEEDS[speed])
+    if speed not in SPEEDS:
+        print(f"vesync: unknown speed: {speed}", file=sys.stderr, flush=True)
+        return
+
+    vs = _vesync_client()
+    vs.update()
+    if not vs.fans:
+        print("vesync: device not found", file=sys.stderr, flush=True)
+        return
+
+    dev = vs.fans[0]
+    if speed == "sleep":
+        dev.sleep_mode()
+    else:
+        dev.change_fan_speed(SPEEDS[speed])
 
 
 def list_speeds() -> List[str]:
