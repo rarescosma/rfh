@@ -17,6 +17,7 @@ AUTH_FILE: Path = _REPO / "auth.json"
 DEVICES_FILE: Path = _REPO / "devices.json"
 
 SPEEDS: Dict[str, int] = {
+    "off": -1,
     "sleep": 0,
     "low": 1,
     "medium": 2,
@@ -58,6 +59,8 @@ def set_speed(speed_spec: str) -> None:
     dev = vs.fans[0]
     if speed == "sleep":
         dev.sleep_mode()
+    elif speed == "off":
+        dev.turn_off()
     else:
         dev.change_fan_speed(SPEEDS[speed])
 
