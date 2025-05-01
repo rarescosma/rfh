@@ -1,7 +1,8 @@
 """VeSync helper."""
+
+import sys
 from functools import lru_cache
 from pathlib import Path
-import sys
 from typing import Dict, List, cast
 
 from pyvesync import VeSync

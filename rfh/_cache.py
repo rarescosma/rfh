@@ -1,4 +1,5 @@
 """Idiotic JSON cache."""
+
 from contextlib import suppress
 from functools import update_wrapper
 from pathlib import Path

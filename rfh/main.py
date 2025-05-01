@@ -1,4 +1,5 @@
-""" Rofi helpers. """
+"""Rofi helpers."""
+
 import os
 import subprocess
 import sys

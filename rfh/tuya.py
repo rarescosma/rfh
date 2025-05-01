@@ -1,4 +1,5 @@
 """Tuya helper."""
+
 from functools import lru_cache
 from pathlib import Path
 from typing import List, NewType, cast
