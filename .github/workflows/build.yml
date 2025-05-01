@@ -34,12 +34,12 @@ jobs:
         run: |
           make pack_static BUILD_VERSION=${{ env.version }}
       - name: Upload tarball
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: rfh-${{ env.version }}-linux-x86_64.tar.gz
           path: pack/rfh-${{ env.version }}-linux-x86_64.tar.gz
       - name: Upload checksum
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: rfh-${{ env.version }}-linux-x86_64.sha256sum
           path: pack/rfh-${{ env.version }}-linux-x86_64.sha256sum
