@@ -21,6 +21,7 @@ _REPO: Path = xdg_config_home() / "rfh" / "tuya"
 CONFIG_FILE: Path = _REPO / "config.json"
 AUTH_FILE: Path = _REPO / "auth.json"
 DEVICES_FILE: Path = _REPO / "devices.json"
+DEV_FILTER: BaseUiLens = lens.Each().Filter(lambda x: x["dev_type"] == "scene")
 
 
 @lru_cache(maxsize=1)
@@ -42,7 +43,7 @@ def _tuya_client() -> TuyaApi:
 
 @cached_load(DEVICES_FILE)
 def _discover_devices() -> list[dict]:
-    return _tuya_client().discover_devices()
+    return DEV_FILTER.collect()(_tuya_client().discover_devices())
 
 
 def _make_spec(dev: dict) -> str:
@@ -60,8 +61,7 @@ def _flip_device(dev: dict) -> None:
 
 def list_devices() -> List[DevSpec]:
     """List all known devices."""
-    dev_filter = lens.Each().Filter(lambda x: x["dev_type"] == "scene")
-    return (dev_filter & lens.F(_make_spec)).collect()(_discover_devices())
+    return (DEV_FILTER & lens.F(_make_spec)).collect()(_discover_devices())
 
 
 def flip_device(dev_spec: DevSpec) -> None:
