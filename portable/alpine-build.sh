@@ -34,7 +34,7 @@ python3 -m venv .venv
 set +x; source .venv/bin/activate; set -x
 
 $PIP_INSTALL .
-patch -p0 -d .venv/lib/python3.11/site-packages/tuyapy --forward --reject-file=- < tuya.patch || true
+patch -p0 -d .venv/lib/python3.*/site-packages/tuyapy --forward --reject-file=- < tuya.patch || true
 
 # produce a 'onefile' executable
 $PIP_INSTALL -I pyinstaller
