@@ -56,13 +56,16 @@ def set_speed(speed_spec: str) -> None:
         print("vesync: device not found", file=sys.stderr, flush=True)
         return
 
-    dev = vs.fans[0]
-    if speed == "sleep":
-        dev.sleep_mode()
-    elif speed == "off":
-        dev.turn_off()
-    else:
-        dev.change_fan_speed(SPEEDS[speed])
+    config = cast(dict, load(CONFIG_FILE))
+    devs = [_ for _ in vs.fans if _.device_name == config.get("device")]
+    if devs:
+        dev = devs[0]
+        if speed == "sleep":
+            dev.sleep_mode()
+        elif speed == "off":
+            dev.turn_off()
+        else:
+            dev.change_fan_speed(SPEEDS[speed])
 
 
 def list_speeds() -> List[str]:
